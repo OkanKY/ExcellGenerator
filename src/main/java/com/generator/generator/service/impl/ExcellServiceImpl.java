@@ -24,6 +24,16 @@ public class ExcellServiceImpl implements ExcellService {
         HSSFSheet sheet = workbook.createSheet("generator sheet");
 
         double[] list= generate();
+        List arrayList=Arrays.asList(list);
+
+        System.out.println("min: "+getMin(arrayList));
+        System.out.println("max: "+getMax(arrayList));
+        System.out.println("sum: "+getSum(arrayList));
+        System.out.println("mean: "+getMean(arrayList));
+        System.out.println("median: "+getMedian(arrayList));
+        System.out.println("stdev: "+getStdev(arrayList));
+        System.out.println("mod: "+getMod(arrayList));
+
         int rownum = 0;
         int cellnum = 0;
         Row row = sheet.createRow(rownum);
@@ -54,10 +64,72 @@ public class ExcellServiceImpl implements ExcellService {
 
     private  double[] generate(){
        return new Random().doubles(0.0, 15.0)
-                .limit(30000)
+                .limit(60000)
                 .parallel().toArray();
     }
 
+    private double getMin(List<Double> list){
+        return list.stream().min(Double::compare).get();
+    }
+    private double getMax(List<Double> list){
+        return list.stream().max(Double::compare).get();
+    }
+
+
+    private double getSum (List<Double> a){
+        if (a.size() > 0) {
+            double sum = 0;
+
+            for (Double i : a) {
+                sum += i;
+            }
+            return sum;
+        }
+        return 0.0;
+    }
+
+    private double getMean (List<Double> a){
+        double sum = getSum(a);
+        double mean = 0;
+        mean = sum / (a.size() * 1.0);
+        return mean;
+    }
+
+    public double getMedian (List<Double> a){
+        int middle = a.size()/2;
+
+        if (a.size() % 2 == 1) {
+            return a.get(middle);
+        } else {
+            return (a.get(middle-1) + a.get(middle)) / 2.0;
+        }
+    }
+    private double getStdev (List<Double> a){
+        int sum = 0;
+        double mean = getMean(a);
+
+        for (Double i : a)
+            sum += Math.pow((i - mean), 2);
+        return Math.sqrt( sum / ( a.size() - 1 ) ); // sample
+    }
+
+    public static <T> T getMod(List<T> list) {
+        Map<T, Integer> map = new HashMap<>();
+
+        for (T t : list) {
+            Integer val = map.get(t);
+            map.put(t, val == null ? 1 : val + 1);
+        }
+
+        Map.Entry<T, Integer> max = null;
+
+        for (Map.Entry<T, Integer> e : map.entrySet()) {
+            if (max == null || e.getValue() > max.getValue())
+                max = e;
+        }
+
+        return max.getKey();
+    }
     private String getFormat(double value){
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
