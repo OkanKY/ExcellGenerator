@@ -1,6 +1,8 @@
 package com.generator.generator.service.impl;
 
 import com.generator.generator.service.ExcellService;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,15 +26,17 @@ public class ExcellServiceImpl implements ExcellService {
         HSSFSheet sheet = workbook.createSheet("generator sheet");
 
         double[] list= generate();
-        List arrayList=Arrays.asList(list);
 
-        System.out.println("min: "+getMin(arrayList));
-        System.out.println("max: "+getMax(arrayList));
-        System.out.println("sum: "+getSum(arrayList));
-        System.out.println("mean: "+getMean(arrayList));
-        System.out.println("median: "+getMedian(arrayList));
-        System.out.println("stdev: "+getStdev(arrayList));
-        System.out.println("mod: "+getMod(arrayList));
+        Double[] inputBoxed = ArrayUtils.toObject(list);
+        List<Double> inputAsList = Arrays.asList(inputBoxed);
+
+        System.out.println("min: "+getMin(inputAsList));
+        System.out.println("max: "+getMax(inputAsList));
+        System.out.println("sum: "+getSum(inputAsList));
+        System.out.println("mean: "+getMean(inputAsList));
+        System.out.println("median: "+getMedian(inputAsList));
+        System.out.println("stdev: "+getStdev(inputAsList));
+        System.out.println("mod: "+getMod(inputAsList));
 
         int rownum = 0;
         int cellnum = 0;
@@ -69,10 +73,10 @@ public class ExcellServiceImpl implements ExcellService {
     }
 
     private double getMin(List<Double> list){
-        return list.stream().min(Double::compare).get();
+        return list.stream().min(Double::compare).get().doubleValue();
     }
     private double getMax(List<Double> list){
-        return list.stream().max(Double::compare).get();
+        return list.stream().max(Double::compare).get().doubleValue();
     }
 
 
