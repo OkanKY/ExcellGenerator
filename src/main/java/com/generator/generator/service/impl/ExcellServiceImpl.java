@@ -25,7 +25,7 @@ public class ExcellServiceImpl implements ExcellService {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("generator sheet");
 
-        double[] list= generate();
+        double[] list= generate(60000);
 
         Double[] inputBoxed = ArrayUtils.toObject(list);
         List<Double> inputAsList = Arrays.asList(inputBoxed);
@@ -66,10 +66,16 @@ public class ExcellServiceImpl implements ExcellService {
         return sheet;
     }
 
-    private  double[] generate(){
+    private  double[] generate(int count){
        return new Random().doubles(0.0, 15.0)
-                .limit(60000)
+                .limit(count)
                 .parallel().toArray();
+    }
+    @Override
+    public List<Double> generateList(int count){
+        double[] list=generate(count);
+        Double[] inputBoxed = ArrayUtils.toObject(list);
+        return  Arrays.asList(inputBoxed);
     }
 
     private double getMin(List<Double> list){
